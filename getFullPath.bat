@@ -1,0 +1,1 @@
+python .\lib\getFullPath.py %*
