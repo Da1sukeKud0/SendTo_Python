@@ -1,0 +1,2 @@
+# SendTo_Python
+WindowsのSendToで動作するutilなど
