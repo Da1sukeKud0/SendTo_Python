@@ -2,10 +2,11 @@
 import sys
 import os
 import pyperclip as pc
+
 if __name__ == "__main__":
 
     if len(sys.argv) < 2:
-        print('Error.')
+        print('[Error] usage: python *.py <file path>')
     else:
         full_path = str(sys.argv[1])
         filename_list = []

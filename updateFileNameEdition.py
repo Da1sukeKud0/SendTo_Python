@@ -5,10 +5,11 @@ import pyperclip as pc
 import shutil
 import datetime
 import re
+
 if __name__ == "__main__":
 
     if len(sys.argv) < 2:
-        print('Error.')
+        print('[Error] usage: python *.py <file path>')
     else:
         full_path = str(sys.argv[1])
 
@@ -18,16 +19,22 @@ if __name__ == "__main__":
 
         # filenameから版部分(<DateFormat>-<Edition>)を抽出
         print(filename)
-        #pattern = r'_[0-9]{8}-[0-9]{1,}' #<DateFormat>-<Edition>:  yyyymmdd-e
-        pattern = r'_[0-9]{6}-[0-9]{1,}' #<DateFormat>-<Edition>:  yymmdd-e
+        pattern = r'_[0-9]{8}-[0-9]{1,}' #<DateFormat>-<Edition>:  yyyymmdd-e
         matchOB = re.search(pattern , filename)
+        if not matchOB:
+            pattern = r'_[0-9]{6}-[0-9]{1,}' #<DateFormat>-<Edition>:  yymmdd-e
+            matchOB = re.search(pattern , filename)
+        
         if matchOB:
             matchStr = matchOB.group() # マッチした文字列を返す
 
             # 版更新処理
             date, edition = matchStr.replace('_','').split('-')
-            #update_date = datetime.date.today().strftime('%Y%m%d') #<DateFormat>: yyyymmdd-e
-            update_date = datetime.date.today().strftime('%Y%m%d')[2:] #<DateFormat>: yymmdd-e
+            # pattern確認
+            if len(date) == 8:
+                update_date = datetime.date.today().strftime('%Y%m%d') #<DateFormat>: yyyymmdd-e
+            else:
+                update_date = datetime.date.today().strftime('%Y%m%d')[2:] #<DateFormat>: yymmdd-e
             # 日付が同じ場合は版+1、異なる場合は0
             if date == update_date:
                 update_edition = str(int(edition) + 1)
@@ -42,9 +49,9 @@ if __name__ == "__main__":
             update_full_path = os.path.join(dir_path, update_filename)
             shutil.copy2(full_path, update_full_path)
 
-            # RocketChatでリンクを張るために``で囲う。
-            pc.copy('`' + dir_path + '`' + '\r\n' + update_filename)
+            # pc.copy('`' + dir_path + '`' + '\r\n' + update_filename)
 
             print('Done.')
         else:
-            print('Error.')
+            print('[Error] undefined pattern')
+            print('defined pattern: *<yyyymmdd-e>*, *<yymmdd-e>*')
